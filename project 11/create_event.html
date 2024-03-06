@@ -1,0 +1,60 @@
+<!-- create_event.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Create New Event</h1>
+        <form id="event-form" class="event-form">
+            <label for="event-name">Event Name:</label>
+            <input type="text" id="event-name" required>
+            <label for="event-description">Description:</label>
+            <textarea id="event-description" rows="4" required></textarea>
+            <label for="event-date">Date and Time:</label>
+            <input type="datetime-local" id="event-date" required>
+            <label for="event-photo">Event Photo:</label>
+            <input type="file" id="event-photo" accept="image/*" required>
+            <button type="submit">Create Event</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('event-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const eventName = document.getElementById('event-name').value;
+            const eventDescription = document.getElementById('event-description').value;
+            const eventDate = document.getElementById('event-date').value;
+            const eventPhoto = document.getElementById('event-photo').files[0];
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const event = {
+                    name: eventName,
+                    description: eventDescription,
+                    date: eventDate,
+                    photo: e.target.result
+                };
+
+                // Retrieve events from Local Storage
+                const events = JSON.parse(localStorage.getItem('events')) || [];
+
+                events.push(event);
+                localStorage.setItem('events', JSON.stringify(events));
+
+                alert('Event created successfully!');
+                location.href = 'index.html';
+            };
+            reader.readAsDataURL(eventPhoto);
+        });
+    </script>
+</body>
+
+</html>

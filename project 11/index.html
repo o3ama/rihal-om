@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Countdown</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Event Countdown</h1>
+        <div id="events-list" class="events-list"></div>
+        <button class="create-event-btn" onclick="location.href='create_event.html'">Create New Event</button>
+    </div>
+
+    <script>
+        const eventsList = document.getElementById('events-list');
+        const createEventBtn = document.querySelector('.create-event-btn');
+
+        // Retrieve events from Local Storage
+        const events = JSON.parse(localStorage.getItem('events')) || [];
+
+        // Display events on the home page
+        events.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.classList.add('event-item');
+            eventItem.innerHTML = `
+                <div class="event-photo" style="background-image: url('${event.photo}')"></div>
+                <div class="event-details">
+                    <h2>${event.name}</h2>
+                    <p>${event.description}</p>
+                    <div class="countdown" data-end="${event.date}"></div>
+                </div>
+            `;
+            eventsList.appendChild(eventItem);
+        });
+
+        // Countdown Timer
+        const countdowns = document.querySelectorAll('.countdown');
+        countdowns.forEach(countdown => {
+            const endDate = new Date(countdown.dataset.end).getTime();
+
+            const updateCountdown = () => {
+                const now = new Date().getTime();
+                const distance = endDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdown.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                if (distance < 0) {
+                    countdown.innerHTML = 'Event Ended';
+                }
+            };
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
+</body>
+
+</html>
